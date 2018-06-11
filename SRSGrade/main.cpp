@@ -7,7 +7,9 @@
 #include <map>
 #include <unordered_map>
 #include <numeric>
+#include <gsl.h>
 #include "boost/functional/hash.hpp"
+#include "roster.h"
 #include "grader_score.h"
 #include "grade.h"
 
@@ -42,7 +44,7 @@ int cout_score(const Roster& roster)
 	using namespace std::literals::string_literals;
 
 	Expects(std::cin.good());
-    std::cin.ignore(std:: numeric_limits<streamsize>::max(), '\n');
+    std::cin.ignore(std:: numeric_limits<std::streamsize>::max(), '\n');
 
 	auto srs_table{ std::vector<std::string>() };
 	while (std::cin.good() && !std::cin.eof())
@@ -60,7 +62,7 @@ int cout_score(const Roster& roster)
 		[]
 		(const Grade::Key key)
 		{
-			auto result{ hash_val(key.getSrs(), key.getGrader(), key.getStudent()) };
+			const auto result{ hash_val(key.getGraderEmail(), key.getStudentName()) };
 			return result;
 		};
 
@@ -94,17 +96,21 @@ int cout_score(const Roster& roster)
 
 	std::map<std::string, GraderScore> score;
 
-	for (const auto& grade_record: grade_sheet)
+	for (const auto& grade_record : grade_sheet)
 	{
-        const auto& [key, grade]{ grade_record };
+		const auto& [key, grade] { grade_record };
 
 		const auto grader_email_key{ key.getGraderEmail() };
-        Ensures(!grader_email_key.empty());
+		Ensures(!grader_email_key.empty());
 
-		const auto student_key{ key.getStudent() };
-        const auto student_email{ roster.find_name(student_key).getEmail() };
-        
-		auto& grader_score{ score[student_key] };
+		const auto student_name_key{ key.getStudentName() };
+		const auto optional_student_record{ roster.find_name(student_name_key) };
+		Expects(optional_student_record.has_value());
+		const auto student_record{ optional_student_record.value() };
+		const auto student_email{ student_record.getEmail() };
+
+		const auto score_value{ grade.getScore() };
+		auto& grader_score{ score[student_name_key] };
         
         if (grader_email_key.compare("labermt@gmail.com"s) == 0)
         {
@@ -126,15 +132,15 @@ int cout_score(const Roster& roster)
 
 	for (const auto& student_score: score)
 	{
-        static constexpr quote{ R"(")" };
+        static const std::string quote{ R"(")" };
 
 		const auto& [student_name, grader_score]{ student_score };
         const auto instructor_score{ grader_score.getInstructor() };
         const auto self_score{ grader_score.getSelf() };
         const auto& peer_score{ grader_score.getPeer() };
 
-        auto peer_size{  };
-        Expect
+        const auto peer_size{ peer_score.size() };
+		Expects(peer_size > 0);
 		const auto peer_mean_score{ std::accumulate(peer_score.cbegin(), peer_score.cend(), 0) / peer_score.size() };
         
 		std::cout << delimiter << 
@@ -170,7 +176,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        Roster roster(argv[1]);
+        const Roster roster(argv[1]);
         result = cout_score(roster);
     }
     return result;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <algorithm>
 #include <optional>
+#include <gsl_assert.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "roster.h"
@@ -14,7 +15,7 @@
 //         {
 //             "id":     "Pikachu", 
 //             "email":  "stuart.dent@oit.edu",
-//             "name" :  "Stu Dent", 
+//             "name":   "Stu Dent", 
 //             "github": "studentRepo"
 //         },
 //         {
@@ -59,21 +60,45 @@
 // }
 
 
+Roster::StudentRecord::StudentRecord(const std::string id, const std::string email, const std::string name, const std::string github):
+	id_{ id }, email_{ email }, name_{ name }, github_{ github }
+{
+}
+
+std::string Roster::StudentRecord::getEmail() const
+{
+	return email_;
+}
+
+std::string Roster::StudentRecord::getName() const
+{
+	return name_;
+}
+
 Roster::Roster(const std::string roster_filename_json)
 {
-    boost::property_tree::ptree root;
+	boost::property_tree::ptree root;
 
-    boost::property_tree::read_json(roster_filename_json, root);
+	boost::property_tree::read_json(roster_filename_json, root);
 
-    for (const boost::property_tree::ptree::value_type& student: root.get_child("roster"))
-    {
-        roster_.emplace_back(student.second.get_value<Student>());
-    }
+	for (const boost::property_tree::ptree::value_type& student_pair : root.get_child("roster"))
+	{
+		const auto& [key, student_entry]{student_pair};
+
+		const auto& id{ student_entry.get<std::string>("id") };
+		const auto& email{ student_entry.get<std::string>("email") };
+		const auto& name{ student_entry.get<std::string>("name") };
+		const auto& github{ student_entry.get<std::string>("github") };
+
+		const StudentRecord student_record(id, email, name, github);
+
+		roster_.emplace_back(student_record);
+	}
 };
 
-std::optional<Student> Roster::find_name(const std::string name) const
+std::optional<const Roster::StudentRecord> Roster::find_name(const std::string student_name) const
 {
-    const auto match_lambda{ [name](const Student& student){ return student.getName() == name; } };
+    const auto match_lambda = [student_name](const StudentRecord& student_record){ return student_record.getName() == student_name; };
     const auto iter
     {
         std::find_if
@@ -84,18 +109,19 @@ std::optional<Student> Roster::find_name(const std::string name) const
         )
     };
 
-    auto std::optional<Student> result;
-    if (iter != roster.end())
-    {
-        result = *iter;
-    }
+    if (iter == roster_.end())
+	{
+		Expects(false);
+		return std::nullopt;
+	}
+	const auto result{ *iter };
 
     return result;
 }
 
-bool Roster::is_email_good(const std::string email)
+bool Roster::is_email_good(const std::string student_email) const
 {
-    const auto match_lambda{ [email](const Student& student){ return student.getEmail() == email; } };
+    const auto match_lambda = [student_email](const StudentRecord& student_record){ return student_record.getEmail() == student_email; };
     const auto iter
     {
         std::find_if
@@ -106,8 +132,7 @@ bool Roster::is_email_good(const std::string email)
         )
     };
 
-    const auto result{iter != roster.end()};
+    const auto result{iter != roster_.end()};
 
     return result;
 }
-

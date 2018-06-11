@@ -12,21 +12,16 @@ public:
 	{
 	private:
 		std::string grader_email_;
-		std::string student_;
+		std::string student_name_;
 
 	private:
 		friend bool operator==(const Key lhs, const Key rhs)
 		{
-			const auto result{ lhs.srs_ == rhs.srs_ && lhs.grader_ == rhs.grader_ && lhs.student_ == rhs.student_ };
+			const auto result{ lhs.grader_email_ == rhs.grader_email_ && lhs.student_name_ == rhs.student_name_ };
 			return result;
 		}
 
 	public:
-		std::string getSrs() const
-		{
-			return srs_;
-		}
-
 		std::string getGraderEmail() const
 		{
 			Expects(!grader_email_.empty());
@@ -39,16 +34,16 @@ public:
 			grader_email_ = grader_email;
 		}
 
-		std::string getStudent() const
+		std::string getStudentName() const
 		{
-			Expects(!student_.empty());
-			return student_;
+			Expects(!student_name_.empty());
+			return student_name_;
 		}
 
-		void setStudent(const std::string student)
+		void setStudentName(const std::string student_name)
 		{
-			Expects(!student.empty());
-			student_ = student;
+			Expects(!student_name.empty());
+			student_name_ = student_name;
 		}
 
         bool is_good() const;
@@ -58,9 +53,11 @@ private:
     const Roster& roster_;
 	Key key_;
 	Timestamp timestamp_;
-	unsigned score_;
+	unsigned score_{ 0 };
 
 public:
+	bool is_good() const;
+
 	Key getKey() const
 	{
 		return key_;
@@ -91,23 +88,23 @@ private:
 		Ensures(timestamp.is_good());
 		grade.setTimestamp(timestamp);
 		
-		char grader_cstr[256]{};
-		constexpr auto max_grader_len{ std::extent<decltype(grader_cstr)>::value };
-		is.getline(grader_cstr, max_grader_len, ',');
-		const auto grader_len{ strlen(grader_cstr) };
+		char grader_email_cstr[256]{};
+		constexpr auto max_grader_len{ std::extent<decltype(grader_email_cstr)>::value };
+		is.getline(grader_email_cstr, max_grader_len, ',');
+		const auto grader_len{ strlen(grader_email_cstr) };
 		Ensures(grader_len > 0 && grader_len < max_grader_len);
 
-		grade.key_.setGrader(grader_cstr);
+		grade.key_.setGraderEmail(grader_email_cstr);
 
 		is.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 
-		char student_cstr[256]{};
-		constexpr auto max_student_len{ std::extent<decltype(student_cstr)>::value };
-		is.getline(student_cstr, max_student_len, ',');
-		const auto student_len{ strlen(grader_cstr) };
-		Ensures(student_len > 0 && student_len < max_student_len);
+		char student_name_cstr[256]{};
+		constexpr auto max_student_name_len{ std::extent<decltype(student_name_cstr)>::value };
+		is.getline(student_name_cstr, max_student_name_len, ',');
+		const auto student_len{ strlen(student_name_cstr) };
+		Ensures(student_len > 0 && student_len < max_student_name_len);
 
-		grade.key_.setStudent(student_cstr);
+		grade.key_.setStudentName(student_name_cstr);
 
 		is.seekg(-1, std::ios_base::end);
 
