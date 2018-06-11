@@ -2,8 +2,8 @@
 // Created by bessermt on 6/3/18.
 //
 
-#ifndef SRSCSV_TIMESTAMP_H
-#define SRSCSV_TIMESTAMP_H
+#ifndef SRSGRADE_TIMESTAMP_H
+#define SRSGRADE_TIMESTAMP_H
 
 #include <iostream>
 #include <iomanip>
@@ -53,4 +53,5 @@ public:
 };
 
 
-#endif //SRSCSV_TIMESTAMP_H
+#endif // SRSGRADE_TIMESTAMP_H
+

@@ -11,8 +11,7 @@ public:
 	class Key
 	{
 	private:
-		const std::string srs_;
-		std::string grader_;
+		std::string grader_email_;
 		std::string student_;
 
 	private:
@@ -23,23 +22,21 @@ public:
 		}
 
 	public:
-		explicit Key(const std::string srs): srs_{srs}{}
-
 		std::string getSrs() const
 		{
 			return srs_;
 		}
 
-		std::string getGrader() const
+		std::string getGraderEmail() const
 		{
-			Expects(!grader_.empty());
-			return grader_;
+			Expects(!grader_email_.empty());
+			return grader_email_;
 		}
 
-		void setGrader(const std::string grader)
+		void setGraderEmail(const std::string grader_email)
 		{
-			Expects(!grader.empty());
-			grader_ = grader;
+			Expects(!grader_email.empty());
+			grader_email_ = grader_email;
 		}
 
 		std::string getStudent() const
@@ -53,9 +50,12 @@ public:
 			Expects(!student.empty());
 			student_ = student;
 		}
+
+        bool is_good() const;
 	};
 
 private:
+    const Roster& roster_;
 	Key key_;
 	Timestamp timestamp_;
 	unsigned score_;
@@ -127,5 +127,6 @@ private:
 	}
 
 public:
-	explicit Grade(const std::string srs);
+	explicit Grade(const Roster& roster);
 };
+

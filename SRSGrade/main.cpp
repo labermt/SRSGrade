@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <limits>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -7,6 +8,7 @@
 #include <unordered_map>
 #include <numeric>
 #include "boost/functional/hash.hpp"
+#include "grader_score.h"
 #include "grade.h"
 
 namespace
@@ -35,22 +37,19 @@ namespace
 	}
 }
 
-int main()
+int cout_score(const Roster& roster)
 {
 	using namespace std::literals::string_literals;
 
-	const auto name{ "CST136SRS00"s };
-	const auto filename{ name + ".csv"s };
-
-	std::ifstream ifstrm(filename);
-	Ensures(ifstrm.good());
+	Expects(std::cin.good());
+    std::cin.ignore(std:: numeric_limits<streamsize>::max(), '\n');
 
 	auto srs_table{ std::vector<std::string>() };
-	while (ifstrm.good() && !ifstrm.eof())
+	while (std::cin.good() && !std::cin.eof())
 	{
 		auto line{ std::string() };
-		getline(ifstrm, line);
-		Ensures(ifstrm.good() || ifstrm.eof());
+		getline(std::cin, line);
+		Ensures(std::cin.good() || std::cin.eof());
 		if (!line.empty())
 		{
 			srs_table.emplace_back(line);
@@ -71,7 +70,7 @@ int main()
 	{
 		auto iss{ std::istringstream(srs_record) };
 
-		Grade grade(name);
+		Grade grade(roster);
 
 		iss >> grade;
 
@@ -93,21 +92,87 @@ int main()
 		}
 	}
 
-	std::map<std::string, std::vector<unsigned>> score;
+	std::map<std::string, GraderScore> score;
 
-	for (const auto& grade: grade_sheet)
+	for (const auto& grade_record: grade_sheet)
 	{
-		const auto student{ grade.first.getStudent() };
-		auto& student_score{ score[student] };
-		student_score.push_back(grade.second.getScore());
+        const auto& [key, grade]{ grade_record };
+
+		const auto grader_email_key{ key.getGraderEmail() };
+        Ensures(!grader_email_key.empty());
+
+		const auto student_key{ key.getStudent() };
+        const auto student_email{ roster.find_name(student_key).getEmail() };
+        
+		auto& grader_score{ score[student_key] };
+        
+        if (grader_email_key.compare("labermt@gmail.com"s) == 0)
+        {
+            Expects(grader_score.getInstructor() == 0);
+            grader_score.setInstructor(score_value);
+        }
+        else if (grader_email_key.compare(student_email) == 0)
+        {
+            Expects(grader_score.getSelf() == 0);
+            grader_score.setSelf(score_value);            
+        }
+        else
+        {
+    		grader_score.addPeer(grade.getScore());
+        }
 	}
+
+    const char* delimiter{ "" };
 
 	for (const auto& student_score: score)
 	{
-		const auto& [student_name, score_vector] {student_score};
-		const auto sum{ std::accumulate(score_vector.cbegin(), score_vector.cend(), 0) };
-		std::cout << student_name << ": " << sum / score_vector.size() << std::endl;
+        static constexpr quote{ R"(")" };
+
+		const auto& [student_name, grader_score]{ student_score };
+        const auto instructor_score{ grader_score.getInstructor() };
+        const auto self_score{ grader_score.getSelf() };
+        const auto& peer_score{ grader_score.getPeer() };
+
+        auto peer_size{  };
+        Expect
+		const auto peer_mean_score{ std::accumulate(peer_score.cbegin(), peer_score.cend(), 0) / peer_score.size() };
+        
+		std::cout << delimiter << 
+            "{" << "\n" << 
+                "\t" << quote << student_name << quote << ": " << "\n" <<
+                "\t" << "{" << "\n" <<
+                "\t" << "\t" << quote << "instructor" << quote << ": " << instructor_score << ", " << "\n" <<
+                "\t" << "\t" << quote << "self"       << quote << ": " << self_score       << ", " << "\n" <<
+                "\t" << "\t" << quote << "peer"       << quote << ": " << peer_mean_score  << ", " << "\n" <<
+                "\t" << "}" << "\n" <<
+            "}";
+        delimiter = ", \n"; 
 	}
+    std::cout << std::endl;
 
 	return 0;
 }
+
+void help()
+{
+    std::cout <<
+        "syntax: SRSGrade [roster_filename.json] [<CST000SRS00.csv] \n"
+        "example: $ SRSGrade cst000roster.json <CST000SRS00.csv \n" <<
+        std::endl;
+}
+
+int main(int argc, char* argv[])
+{
+    auto result = 1;
+    if (argc!=2)
+    {
+        help();
+    }
+    else
+    {
+        Roster roster(argv[1]);
+        result = cout_score(roster);
+    }
+    return result;
+}
+
