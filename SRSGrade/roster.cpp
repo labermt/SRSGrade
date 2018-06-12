@@ -85,6 +85,7 @@ Roster::Roster(const std::string roster_filename_json)
 	{
 		const auto& [key, student_entry]{student_pair};
 
+		// TODO: Is there a way to get all values in one shot?
 		const auto& id{ student_entry.get<std::string>("id") };
 		const auto& email{ student_entry.get<std::string>("email") };
 		const auto& name{ student_entry.get<std::string>("name") };

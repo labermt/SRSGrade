@@ -43,15 +43,20 @@ int cout_score(const Roster& roster)
 {
 	using namespace std::literals::string_literals;
 
-	Expects(std::cin.good());
-    std::cin.ignore(std:: numeric_limits<std::streamsize>::max(), '\n');
+	const auto name{ "CST136SRS00"s };
+	const auto filename{ name + ".csv"s };
+
+	std::ifstream ifstrm(filename);
+
+	Expects(ifstrm.good());
+	ifstrm.ignore(std:: numeric_limits<std::streamsize>::max(), '\n');
 
 	auto srs_table{ std::vector<std::string>() };
-	while (std::cin.good() && !std::cin.eof())
+	while (ifstrm.good() && !std::cin.eof())
 	{
 		auto line{ std::string() };
-		getline(std::cin, line);
-		Ensures(std::cin.good() || std::cin.eof());
+		getline(ifstrm, line);
+		Ensures(ifstrm.good() || ifstrm.eof());
 		if (!line.empty())
 		{
 			srs_table.emplace_back(line);
@@ -77,19 +82,25 @@ int cout_score(const Roster& roster)
 		iss >> grade;
 
 		const auto key{ grade.getKey() };
+		const auto found_iter{ grade_sheet.find(key) };
+
 		const auto value{ std::make_pair(key, grade) };
 
-		const auto [insert_iter, success] { grade_sheet.insert(value) };
-
-		if (!success)
+		// CRUD
+		if (found_iter == grade_sheet.end()) // create
 		{
-			const auto [existing_key, existing_grade] { *insert_iter };
+			const auto success{ grade_sheet.insert(value).second };
+			Ensures(success);
+		}
+		else // update
+		{
+			const auto [existing_key, existing_grade] { *found_iter }; // read
 			if (existing_grade.getTimestamp() < grade.getTimestamp())
 			{
-				grade_sheet.erase(insert_iter);
+				grade_sheet.erase(found_iter); // delete
 				assert(false); // TODO: Check this code works, then remove this line. 
-				const auto replaced{ grade_sheet.insert(value).second };
-				Ensures(replaced);
+				const auto success{ grade_sheet.insert(value).second };
+				Ensures(success);
 			}
 		}
 	}
@@ -140,8 +151,11 @@ int cout_score(const Roster& roster)
         const auto& peer_score{ grader_score.getPeer() };
 
         const auto peer_size{ peer_score.size() };
-		Expects(peer_size > 0);
-		const auto peer_mean_score{ std::accumulate(peer_score.cbegin(), peer_score.cend(), 0) / peer_score.size() };
+		double peer_mean_score{ 0.0 };
+		if (peer_size != 0)
+		{
+			peer_mean_score = 1.0 * std::accumulate(peer_score.cbegin(), peer_score.cend(), 0) / peer_size;
+		}
         
 		std::cout << delimiter << 
             "{" << "\n" << 
@@ -181,4 +195,3 @@ int main(int argc, char* argv[])
     }
     return result;
 }
-
