@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CEA8402A-F59C-4FB4-860E-FFCB7F1F8B4D}"
 	ProjectSection(SolutionItems) = preProject
 		SRSGrade\CST136SRS00.csv = SRSGrade\CST136SRS00.csv
+		grades.json = grades.json
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SRSGrade", "SRSGrade\SRSGrade.vcxproj", "{A0286F90-4660-4076-B386-5B799BFE3284}"

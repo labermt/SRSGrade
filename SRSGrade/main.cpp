@@ -141,6 +141,8 @@ int cout_score(const Roster& roster)
 
     const char* delimiter{ "" };
 
+	std::cout << "{" "\n"
+		"\t" "\"grade\": [" "\n";
 	for (const auto& student_score: score)
 	{
         static const std::string quote{ R"(")" };
@@ -154,21 +156,27 @@ int cout_score(const Roster& roster)
 		double peer_mean_score{ 0.0 };
 		if (peer_size != 0)
 		{
-			peer_mean_score = 1.0 * std::accumulate(peer_score.cbegin(), peer_score.cend(), 0) / peer_size;
+			const auto quarter_size{ peer_size / 4 };
+			const auto quarter_begin{ peer_score.cbegin() + quarter_size };
+			const auto quarter_end{ peer_score.cend() - quarter_size };
+
+			peer_mean_score = 1.0 * std::accumulate(quarter_begin, quarter_end, 0) / std::distance(quarter_begin, quarter_end);
 		}
         
-		std::cout << delimiter << 
-            "{" << "\n" << 
-                "\t" << quote << student_name << quote << ": " << "\n" <<
-                "\t" << "{" << "\n" <<
-                "\t" << "\t" << quote << "instructor" << quote << ": " << instructor_score << ", " << "\n" <<
-                "\t" << "\t" << quote << "self"       << quote << ": " << self_score       << ", " << "\n" <<
-                "\t" << "\t" << quote << "peer"       << quote << ": " << peer_mean_score  << ", " << "\n" <<
-                "\t" << "}" << "\n" <<
-            "}";
+		std::cout << delimiter <<
+            "\t" "{" << "\n" << 
+                "\t\t" << quote << student_name << quote << ": " << "\n" <<
+                "\t\t" << "{" << "\n" <<
+                "\t\t\t" << quote << "instructor" << quote << ": " << instructor_score << ", " << "\n" <<
+                "\t\t\t" << quote << "self"       << quote << ": " << self_score       << ", " << "\n" <<
+                "\t\t\t" << quote << "peer"       << quote << ": " << peer_mean_score  <<         "\n" <<
+                "\t\t" << "}" << "\n" <<
+			"\t" "}";
+
         delimiter = ", \n"; 
 	}
-    std::cout << std::endl;
+	std::cout << "\n" "\t" "]" "\n"
+		"}" << std::endl;
 
 	return 0;
 }
@@ -183,7 +191,7 @@ void help()
 
 int main(int argc, char* argv[])
 {
-    auto result = 1;
+	auto result = 1;
     if (argc!=2)
     {
         help();

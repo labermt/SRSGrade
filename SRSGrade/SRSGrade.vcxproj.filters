@@ -57,5 +57,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="cst136roster.json" />
+    <None Include="cst238roster.json" />
   </ItemGroup>
 </Project>

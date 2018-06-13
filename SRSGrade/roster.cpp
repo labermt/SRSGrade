@@ -110,12 +110,9 @@ std::optional<const Roster::StudentRecord> Roster::find_name(const std::string s
         )
     };
 
-    if (iter == roster_.end())
-	{
-		Expects(false);
-		return std::nullopt;
-	}
-	const auto result{ *iter };
+	Expects(iter != roster_.end());
+
+	std::optional<const Roster::StudentRecord> result(*iter);
 
     return result;
 }

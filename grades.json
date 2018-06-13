@@ -1,0 +1,123 @@
+{
+    "grade": [
+        {
+            "AJ Stacher": {
+                "instructor": 85,
+                "self": 95,
+                "peer": 92.7778
+            }
+        },
+        {
+            "An Coklar": {
+                "instructor": 85,
+                "self": 95,
+                "peer": 95
+            }
+        },
+        {
+            "Beau Bell": {
+                "instructor": 85,
+                "self": 95,
+                "peer": 87.5
+            }
+        },
+        {
+            "Bobby Mahaffey": {
+                "instructor": 0,
+                "self": 95,
+                "peer": 87.2222
+            }
+        },
+        {
+            "Chris Michalsen": {
+                "instructor": 95,
+                "self": 85,
+                "peer": 91.6667
+            }
+        },
+        {
+            "Colin Rexing": {
+                "instructor": 95,
+                "self": 95,
+                "peer": 95
+            }
+        },
+        {
+            "Drew Deraita": {
+                "instructor": 95,
+                "self": 95,
+                "peer": 95
+            }
+        },
+        {
+            "Fro Warner": {
+                "instructor": 0,
+                "self": 0,
+                "peer": 90
+            }
+        },
+        {
+            "Jared Muralt": {
+                "instructor": 85,
+                "self": 95,
+                "peer": 92.5
+            }
+        },
+        {
+            "John Kaye": {
+                "instructor": 0,
+                "self": 85,
+                "peer": 89.4444
+            }
+        },
+        {
+            "Jordan Clark": {
+                "instructor": 95,
+                "self": 95,
+                "peer": 95
+            }
+        },
+        {
+            "Michael Waxman": {
+                "instructor": 65,
+                "self": 0,
+                "peer": 78.75
+            }
+        },
+        {
+            "Mike Flanagan": {
+                "instructor": 65,
+                "self": 95,
+                "peer": 70.5556
+            }
+        },
+        {
+            "Nathan Tout": {
+                "instructor": 85,
+                "self": 85,
+                "peer": 88.3333
+            }
+        },
+        {
+            "Sasha Sanderson": {
+                "instructor": 85,
+                "self": 0,
+                "peer": 90
+            }
+        },
+        {
+            "Thea Van Kessel": {
+                "instructor": 0,
+                "self": 95,
+                "peer": 0
+            }
+        },
+        {
+            "Tim Carpenter": {
+                "instructor": 85,
+                "self": 95,
+                "peer": 91.25
+            }
+        }
+    ]
+}

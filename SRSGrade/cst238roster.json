@@ -1,0 +1,77 @@
+{
+    "roster": [
+        {
+            "id": "Bunnelby",
+            "email": "randall.mackin@oit.edu",
+            "name": "Randall Mackin",
+            "github": "AuraZero"
+        },
+        {
+            "id": "Chinchou",
+            "email": "joshua.bailey@oit.edu",
+            "name": "Joshua Bailey",
+            "github": "joshbailey98"
+        },
+        {
+            "id": "Goomy",
+            "email": "david.russell@oit.edu",
+            "name": "David Russell",
+            "github": "Phylanx"
+        },
+        {
+            "id": "Honedge",
+            "email": "tanel.helmik@oit.edu",
+            "name": "Tanel Helmik",
+            "github": "vigilantmaster"
+        },
+        {
+            "id": "Karrablast",
+            "email": "bradley.bergstrom@oit.edu",
+            "name": "Bradley Bergstrom",
+            "github": "BradBergstrom"
+        },
+        {
+            "id": "Marill",
+            "email": "nicholas.slaughter@oit.edu",
+            "name": "Nicholas Slaughter",
+            "github": "NicholasSlaughter"
+        },
+        {
+            "id": "Nosepass",
+            "email": "yennywright@gmail.com",
+            "name": "Yenny Purwanto",
+            "github": "ypurwantopdx"
+        },
+        {
+            "id": "Persian",
+            "email": "timothy.capehart@oit.edu",
+            "name": "Timothy Capehart",
+            "github": "TimothyCapehart"
+        },
+        {
+            "id": "Pumpkaboo",
+            "email": "jacob.hill@oit.edu",
+            "name": "Jacob Hill",
+            "github": "jakeupdyln"
+        },
+        {
+            "id": "Pupitar",
+            "email": "shant.ahuja@oit.edu",
+            "name": "Shant Ahuja",
+            "github": "shantahuja"
+        },
+        {
+            "id": "Skitty",
+            "email": "jake.knudsen@oit.edu",
+            "name": "Jake Knudsen",
+            "github": "Znowy"
+        },
+        {
+            "id": "Taillow",
+            "email": "andrew.doser@oit.edu",
+            "name": "Andrew Doser",
+            "github": "LoserAim"
+        }
+    ]
+}
+
