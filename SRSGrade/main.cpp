@@ -18,20 +18,20 @@ namespace
 	// Cargo Culted From: The C++ Standard Libary by Nicolai M. Josuttis, p365
 
 	template<typename T>
-	void hash_val(std::size_t& seed, const T& val)
+	void hash_val(std::size_t& seed, T const& val)
 	{
 		boost::hash_combine(seed, val);
 	}
 
 	template<typename T, typename... Types>
-	void hash_val(std::size_t& seed, const T& val, const Types&... args)
+	void hash_val(std::size_t& seed, T const& val, Types const&... args)
 	{
 		boost::hash_combine(seed, val);
 		hash_val(seed, args...);
 	}
 
 	template<typename... Types>
-	std::size_t hash_val(const Types&... args)
+	std::size_t hash_val(Types const&... args)
 	{
 		std::size_t seed{ 0 };
 		hash_val(seed, args...);
@@ -39,41 +39,41 @@ namespace
 	}
 }
 
-int cout_score(const Roster& roster)
+int cout_score(Roster const& roster)
 {
 	using namespace std::literals::string_literals;
 
-	const auto name{ "CST136SRS00"s };
-	const auto filename{ name + ".csv"s };
+	// auto const name{ "CST000SRS00"s };
+	// auto const filename{ name + ".csv"s };
 
-	std::ifstream ifstrm(filename);
+	// std::ifstream ifstrm(filename);
 
-	Expects(ifstrm.good());
-	ifstrm.ignore(std:: numeric_limits<std::streamsize>::max(), '\n');
+	Expects(std::cin.good());
+	std::cin.ignore(std:: numeric_limits<std::streamsize>::max(), '\n');
 
 	auto srs_table{ std::vector<std::string>() };
-	while (ifstrm.good() && !std::cin.eof())
+	while (std::cin.good() && !std::cin.eof())
 	{
 		auto line{ std::string() };
-		getline(ifstrm, line);
-		Ensures(ifstrm.good() || ifstrm.eof());
+		getline(std::cin, line);
+		Ensures(std::cin.good() || std::cin.eof());
 		if (!line.empty())
 		{
 			srs_table.emplace_back(line);
 		}
 	}
 
-	const auto hash =
+	auto const hash =
 		[]
-		(const Grade::Key key)
+		(Grade::Key const key)
 		{
-			const auto result{ hash_val(key.getGraderEmail(), key.getStudentName()) };
+			auto const result{ hash_val(key.getGraderEmail(), key.getStudentName()) };
 			return result;
 		};
 
 	std::unordered_map<Grade::Key, const Grade, decltype(hash)> grade_sheet(32768, hash);
 
-	for (const auto& srs_record : srs_table)
+	for (auto const& srs_record : srs_table)
 	{
 		auto iss{ std::istringstream(srs_record) };
 
@@ -81,25 +81,27 @@ int cout_score(const Roster& roster)
 
 		iss >> grade;
 
-		const auto key{ grade.getKey() };
-		const auto found_iter{ grade_sheet.find(key) };
+		Ensures(grade.is_good());
 
-		const auto value{ std::make_pair(key, grade) };
+		auto const key{ grade.getKey() };
+		auto const found_iter{ grade_sheet.find(key) };
+
+		auto const value{ std::make_pair(key, grade) };
 
 		// CRUD
 		if (found_iter == grade_sheet.end()) // create
 		{
-			const auto success{ grade_sheet.insert(value).second };
+			auto const success{ grade_sheet.insert(value).second };
 			Ensures(success);
 		}
 		else // update
 		{
-			const auto [existing_key, existing_grade] { *found_iter }; // read
+			auto const [existing_key, existing_grade] { *found_iter }; // read
 			if (existing_grade.getTimestamp() < grade.getTimestamp())
 			{
 				grade_sheet.erase(found_iter); // delete
 				assert(false); // TODO: Check this code works, then remove this line. 
-				const auto success{ grade_sheet.insert(value).second };
+				auto const success{ grade_sheet.insert(value).second };
 				Ensures(success);
 			}
 		}
@@ -107,20 +109,20 @@ int cout_score(const Roster& roster)
 
 	std::map<std::string, GraderScore> score;
 
-	for (const auto& grade_record : grade_sheet)
+	for (auto const& grade_record : grade_sheet)
 	{
-		const auto& [key, grade] { grade_record };
+		auto const& [key, grade] { grade_record };
 
-		const auto grader_email_key{ key.getGraderEmail() };
+		auto const grader_email_key{ key.getGraderEmail() };
 		Ensures(!grader_email_key.empty());
 
-		const auto student_name_key{ key.getStudentName() };
-		const auto optional_student_record{ roster.find_name(student_name_key) };
+		auto const student_name_key{ key.getStudentName() };
+		auto const optional_student_record{ roster.find_name(student_name_key) };
 		Expects(optional_student_record.has_value());
-		const auto student_record{ optional_student_record.value() };
-		const auto student_email{ student_record.getEmail() };
+		auto const student_record{ optional_student_record.value() };
+		auto const student_email{ student_record.getEmail() };
 
-		const auto score_value{ grade.getScore() };
+		auto const score_value{ grade.getScore() };
 		auto& grader_score{ score[student_name_key] };
         
         if (grader_email_key.compare("labermt@gmail.com"s) == 0)
@@ -135,30 +137,36 @@ int cout_score(const Roster& roster)
         }
         else
         {
+			Expects(grade.is_good());
     		grader_score.addPeer(grade.getScore());
         }
 	}
 
-    const char* delimiter{ "" };
+    char const* delimiter{ "" };
 
 	std::cout << "{" "\n"
 		"\t" "\"grade\": [" "\n";
-	for (const auto& student_score: score)
+	for (auto const& student_score: score)
 	{
-        static const std::string quote{ R"(")" };
+        static std::string const quote{ R"(")" };
 
-		const auto& [student_name, grader_score]{ student_score };
-        const auto instructor_score{ grader_score.getInstructor() };
-        const auto self_score{ grader_score.getSelf() };
-        const auto& peer_score{ grader_score.getPeer() };
+		auto const& [student_name, grader_score]{ student_score };
+        auto const instructor_score{ grader_score.getInstructor() };
+        auto const self_score{ grader_score.getSelf() };
+        auto peer_score{ grader_score.getPeer() };
 
-        const auto peer_size{ peer_score.size() };
+        auto const peer_size{ peer_score.size() };
 		double peer_mean_score{ 0.0 };
 		if (peer_size != 0)
 		{
-			const auto quarter_size{ peer_size / 4 };
-			const auto quarter_begin{ peer_score.cbegin() + quarter_size };
-			const auto quarter_end{ peer_score.cend() - quarter_size };
+			auto const cbegin{ peer_score.begin() };
+			auto const cend{ peer_score.end() };
+
+			std::sort(cbegin, cend);
+
+			auto const quarter_size{ peer_size / 4 };
+			auto const quarter_begin{ cbegin + quarter_size };
+			auto const quarter_end{ cend - quarter_size };
 
 			peer_mean_score = 1.0 * std::accumulate(quarter_begin, quarter_end, 0) / std::distance(quarter_begin, quarter_end);
 		}
@@ -198,7 +206,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        const Roster roster(argv[1]);
+        Roster const roster(argv[1]);
         result = cout_score(roster);
     }
     return result;

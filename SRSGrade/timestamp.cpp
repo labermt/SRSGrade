@@ -11,7 +11,7 @@
 
 namespace
 {
-    static auto make_time_point
+    auto make_time_point
     (
         const int year,
         const int mon,
@@ -43,7 +43,7 @@ namespace
         return result;
     }
 
-    static auto make_time_point(const std::string date, const std::string time)
+    auto make_time_point(const std::string date, const std::string time)
     {
         auto year{ 0 };
         auto mon{ 0 };

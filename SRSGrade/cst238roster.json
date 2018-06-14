@@ -1,6 +1,12 @@
 {
     "roster": [
         {
+            "id": "Professor Oak",
+            "email": "labermt@gmail.com",
+            "name": "Mitch Besser",
+            "github": "labermt"
+        },
+        {
             "id": "Bunnelby",
             "email": "randall.mackin@oit.edu",
             "name": "Randall Mackin",
@@ -20,7 +26,7 @@
         },
         {
             "id": "Honedge",
-            "email": "tanel.helmik@oit.edu",
+            "email": "Tanelhelmik@gmail.com",
             "name": "Tanel Helmik",
             "github": "vigilantmaster"
         },
@@ -38,7 +44,7 @@
         },
         {
             "id": "Nosepass",
-            "email": "yennywright@gmail.com",
+            "email": "yenny.purwanto@oit.edu",
             "name": "Yenny Purwanto",
             "github": "ypurwantopdx"
         },
@@ -56,22 +62,21 @@
         },
         {
             "id": "Pupitar",
-            "email": "shant.ahuja@oit.edu",
+            "email": "shantahuja@gmail.com",
             "name": "Shant Ahuja",
             "github": "shantahuja"
         },
         {
             "id": "Skitty",
             "email": "jake.knudsen@oit.edu",
-            "name": "Jake Knudsen",
+            "name": "Jacob Knudsen",
             "github": "Znowy"
         },
         {
             "id": "Taillow",
-            "email": "andrew.doser@oit.edu",
+            "email": "drew.doser@gmail.com",
             "name": "Andrew Doser",
             "github": "LoserAim"
         }
     ]
 }
-

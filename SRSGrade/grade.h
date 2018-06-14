@@ -11,6 +11,7 @@ public:
 	class Key
 	{
 	private:
+		Roster const& roster_;
 		std::string grader_email_;
 		std::string student_name_;
 
@@ -22,15 +23,17 @@ public:
 		}
 
 	public:
+		explicit Key(Roster const& roster);
+
 		std::string getGraderEmail() const
 		{
-			Expects(!grader_email_.empty());
+			Expects(!grader_email_.empty() && roster_.is_email_good(grader_email_));
 			return grader_email_;
 		}
 
 		void setGraderEmail(const std::string grader_email)
 		{
-			Expects(!grader_email.empty());
+			Expects(!grader_email.empty() && roster_.is_email_good(grader_email));
 			grader_email_ = grader_email;
 		}
 
@@ -50,9 +53,9 @@ public:
 	};
 
 private:
-    const Roster& roster_;
+    Roster const& roster_;
 	Key key_;
-	Timestamp timestamp_;
+	Timestamp timestamp_{};
 	unsigned score_{ 0 };
 
 public:
@@ -91,7 +94,7 @@ private:
 		char grader_email_cstr[256]{};
 		constexpr auto max_grader_len{ std::extent<decltype(grader_email_cstr)>::value };
 		is.getline(grader_email_cstr, max_grader_len, ',');
-		const auto grader_len{ strlen(grader_email_cstr) };
+		auto const grader_len{ strlen(grader_email_cstr) };
 		Ensures(grader_len > 0 && grader_len < max_grader_len);
 
 		grade.key_.setGraderEmail(grader_email_cstr);
@@ -101,10 +104,12 @@ private:
 		char student_name_cstr[256]{};
 		constexpr auto max_student_name_len{ std::extent<decltype(student_name_cstr)>::value };
 		is.getline(student_name_cstr, max_student_name_len, ',');
-		const auto student_len{ strlen(student_name_cstr) };
+		auto const student_len{ strlen(student_name_cstr) };
 		Ensures(student_len > 0 && student_len < max_student_name_len);
 
 		grade.key_.setStudentName(student_name_cstr);
+
+		Ensures(grade.is_good());
 
 		is.seekg(-1, std::ios_base::end);
 
@@ -114,16 +119,24 @@ private:
 
 		Ensures(grade_str.length()==1 && is.eof());
 
-		const auto grade_letter{ grade_str.at(0) };
+		auto const grade_letter{ grade_str.at(0) };
 
-		Ensures(grade_letter >= 'A' && grade_letter < 'G'); // TODO: Handle the zeroes. 
+		Ensures(grade_letter >= 'A' && grade_letter < 'G' || grade_letter == '0'); // TODO: Handle the zeroes. 
 
-		grade.score_ = 95 - 10 * ( grade_letter - 'A' );
+		if (grade_letter == '0')
+		{
+			grade.score_ = 0;
+		}
+		else
+		{
+			grade.score_ = 95 - 10 * (grade_letter - 'A');
+		}
+		Ensures(grade.score_ >= 0 && grade.score_ < 100);
 
 		return is;
 	}
 
 public:
-	explicit Grade(const Roster& roster);
+	explicit Grade(Roster const& roster);
 };
 

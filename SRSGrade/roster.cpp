@@ -4,6 +4,7 @@
 #include <gsl_assert.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/algorithm/string.hpp>
 #include "roster.h"
 
 
@@ -79,9 +80,9 @@ Roster::Roster(const std::string roster_filename_json)
 {
 	boost::property_tree::ptree root;
 
-	boost::property_tree::read_json(roster_filename_json, root);
+	read_json(roster_filename_json, root);
 
-	for (const boost::property_tree::ptree::value_type& student_pair : root.get_child("roster"))
+	for (auto const& student_pair : root.get_child("roster"))
 	{
 		const auto& [key, student_entry]{student_pair};
 
@@ -119,7 +120,7 @@ std::optional<const Roster::StudentRecord> Roster::find_name(const std::string s
 
 bool Roster::is_email_good(const std::string student_email) const
 {
-    const auto match_lambda = [student_email](const StudentRecord& student_record){ return student_record.getEmail() == student_email; };
+    const auto match_lambda = [student_email](const StudentRecord& student_record){ return boost::iequals(student_record.getEmail(), student_email); };
     const auto iter
     {
         std::find_if

@@ -31,4 +31,3 @@ public:
 };
 
 #endif // SRSGRADE_ROSTER_H
-
