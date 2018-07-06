@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "roster.h"
 #include "grade.h"
+#include "roster.h"
 
 Grade::Grade(Roster const& roster): roster_{ roster }, key_{ roster }
 {

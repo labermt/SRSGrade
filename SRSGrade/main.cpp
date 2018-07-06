@@ -99,8 +99,8 @@ int cout_score(Roster const& roster)
 			auto const [existing_key, existing_grade] { *found_iter }; // read
 			if (existing_grade.getTimestamp() < grade.getTimestamp())
 			{
-				grade_sheet.erase(found_iter); // delete
-				assert(false); // TODO: Check this code works, then remove this line. 
+				// grade_sheet.erase(found_iter); // delete
+				// assert(false); // TODO: Check this code works, then remove this line. 
 				auto const success{ grade_sheet.insert(value).second };
 				Ensures(success);
 			}
@@ -159,29 +159,38 @@ int cout_score(Roster const& roster)
 		double peer_mean_score{ 0.0 };
 		if (peer_size != 0)
 		{
-			auto const cbegin{ peer_score.begin() };
-			auto const cend{ peer_score.end() };
+			auto const begin{ peer_score.begin() };
+			auto const end{ peer_score.end() };
 
-			std::sort(cbegin, cend);
+			std::sort(begin, end);
 
 			auto const quarter_size{ peer_size / 4 };
-			auto const quarter_begin{ cbegin + quarter_size };
-			auto const quarter_end{ cend - quarter_size };
+			auto const quarter_begin{ begin + quarter_size };
+			auto const quarter_end{ end - quarter_size };
 
 			peer_mean_score = 1.0 * std::accumulate(quarter_begin, quarter_end, 0) / std::distance(quarter_begin, quarter_end);
 		}
-        
-		std::cout << delimiter <<
-            "\t" "{" << "\n" << 
-                "\t\t" << quote << student_name << quote << ": " << "\n" <<
-                "\t\t" << "{" << "\n" <<
-                "\t\t\t" << quote << "instructor" << quote << ": " << instructor_score << ", " << "\n" <<
-                "\t\t\t" << quote << "self"       << quote << ": " << self_score       << ", " << "\n" <<
-                "\t\t\t" << quote << "peer"       << quote << ": " << peer_mean_score  <<         "\n" <<
-                "\t\t" << "}" << "\n" <<
-			"\t" "}";
 
-        delimiter = ", \n"; 
+		auto const student_record{ roster.find_name(student_name) };
+
+		if (student_record.has_value())
+		{
+			std::cout << delimiter <<
+	            "\t" "{" << "\n" << 
+	                "\t\t" << quote << student_record.value().getId() << quote << ": " << "\n" <<
+	                "\t\t" << "{" << "\n" <<
+	                "\t\t\t" << quote << "instructor" << quote << ": " << instructor_score << ", " << "\n" <<
+	                "\t\t\t" << quote << "self"       << quote << ": " << self_score       << ", " << "\n" <<
+	                "\t\t\t" << quote << "peer"       << quote << ": " << peer_mean_score  <<         "\n" <<
+	                "\t\t" << "}" << "\n" <<
+				"\t" "}";
+
+	        delimiter = ", \n"; 
+		}
+		else
+		{
+			Expects(false);
+		}
 	}
 	std::cout << "\n" "\t" "]" "\n"
 		"}" << std::endl;

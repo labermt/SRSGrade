@@ -3,7 +3,9 @@
 #include <type_traits>
 #include <tuple>
 #include <gsl.h>
+#include "roster.h"
 #include "timestamp.h"
+#include <boost/multi_index/sequenced_index.hpp>
 
 class Grade
 {
@@ -111,27 +113,24 @@ private:
 
 		Ensures(grade.is_good());
 
-		is.seekg(-1, std::ios_base::end);
+		is.seekg(-2, std::ios_base::end);
 
-		std::string grade_str;
+		auto const is_comma{ is.peek()==',' };
 
-		is >> grade_str;
-
-		Ensures(grade_str.length()==1 && is.eof());
-
-		auto const grade_letter{ grade_str.at(0) };
-
-		Ensures(grade_letter >= 'A' && grade_letter < 'G' || grade_letter == '0'); // TODO: Handle the zeroes. 
-
-		if (grade_letter == '0')
+		if (is_comma)
 		{
-			grade.score_ = 0;
+			is.ignore();
 		}
-		else
-		{
-			grade.score_ = 95 - 10 * (grade_letter - 'A');
-		}
-		Ensures(grade.score_ >= 0 && grade.score_ < 100);
+
+		auto grade_value{ std::numeric_limits<int>::max() };
+
+		is >> grade_value;
+
+		Ensures(grade_value >= 0 && grade_value<(10+1) && is.eof());
+
+		grade.score_ = 10 * grade_value;
+
+		Ensures(grade.score_ >= 0 && grade.score_ < (100+1));
 
 		return is;
 	}

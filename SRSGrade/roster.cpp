@@ -1,11 +1,11 @@
 #include "stdafx.h"
+#include "roster.h"
 #include <algorithm>
 #include <optional>
 #include <gsl_assert.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/algorithm/string.hpp>
-#include "roster.h"
 
 
 // Example Roster:
@@ -74,6 +74,11 @@ std::string Roster::StudentRecord::getEmail() const
 std::string Roster::StudentRecord::getName() const
 {
 	return name_;
+}
+
+std::string Roster::StudentRecord::getId() const
+{
+	return id_;
 }
 
 Roster::Roster(const std::string roster_filename_json)

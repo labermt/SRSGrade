@@ -19,6 +19,7 @@ private:
 		StudentRecord(const std::string id, const std::string email, const std::string name, const std::string github);
 		std::string getEmail() const;
 		std::string getName() const;
+		std::string getId() const;
 	};
 
     std::vector<StudentRecord> roster_{};

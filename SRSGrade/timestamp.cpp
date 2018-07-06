@@ -3,11 +3,11 @@
 //
 
 #include "stdafx.h"
+#include "timestamp.h"
 #include <string>
 #include <chrono>
 #include <sstream>
 #include <gsl.h>
-#include "timestamp.h"
 
 namespace
 {

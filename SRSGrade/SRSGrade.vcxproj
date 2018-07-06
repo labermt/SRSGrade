@@ -184,8 +184,10 @@
     <ClCompile Include="timestamp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cst136roster.json" />
     <None Include="cst238roster.json" />
+    <None Include="cst238srs00.json" />
+    <None Include="cst276roster.json" />
+    <None Include="cst276srs00.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
